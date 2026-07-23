@@ -225,6 +225,14 @@ def _validate_history(
         )
 
 
+def current_version(conn: sqlite3.Connection) -> int | None:
+    versions = _applied_versions(conn)
+
+    _validate_history(versions)
+
+    return versions[-1] if versions else None
+
+
 def run_migrations(
     conn: sqlite3.Connection,
     *,
