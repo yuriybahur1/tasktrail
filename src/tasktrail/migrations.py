@@ -20,3 +20,10 @@ def _ensure_migration_table(conn: sqlite3.Connection) -> None:
         ) STRICT
         """
     )
+
+
+def run_migrations(conn: sqlite3.Connection):
+    try:
+        pass
+    except sqlite3.Error:
+        pass
