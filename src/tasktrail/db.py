@@ -1,10 +1,15 @@
 import sqlite3
+from collections.abc import Generator
+from contextlib import contextmanager
+from pathlib import Path
 
-from tasktrail.errors import DatabaseError
+from tasktrail.errors import DatabaseError, DatabaseNotInitializedError
 
 _BUSY_TIMEOUT_MS = 5000
 
 _SYNCHRONOUS = "NORMAL"
+
+_CONNECT_TIMEOUT_SECONDS = 5.0
 
 
 def _configure_connection(connection: sqlite3.Connection, *, writable: bool) -> None:
@@ -21,3 +26,38 @@ def _configure_connection(connection: sqlite3.Connection, *, writable: bool) -> 
         connection.execute(f"PRAGMA synchronous = {_SYNCHRONOUS}")
 
     connection.execute(f"PRAGMA busy_timeout = {_BUSY_TIMEOUT_MS}")
+
+
+@contextmanager
+def open_database(path: Path, *, create: bool = False) -> Generator[sqlite3.Connection]:
+    if not path.exists() and not create:
+        raise DatabaseNotInitializedError(
+            "database not initialized; run 'tasktrail init'"
+        )
+
+    if create:
+        path.parent.mkdir(parents=True, exist_ok=True)
+
+    connection: sqlite3.Connection | None = None
+
+    try:
+        connection = sqlite3.connect(
+            path,
+            timeout=_CONNECT_TIMEOUT_SECONDS,
+            isolation_level=None,
+        )
+
+        _configure_connection(connection, writable=True)
+    except DatabaseError:
+        if connection is not None:
+            connection.close()
+        raise
+    except sqlite3.Error as exc:
+        if connection is not None:
+            connection.close()
+        raise DatabaseError("database operation failed") from exc
+
+    try:
+        yield connection
+    finally:
+        connection.close()
