@@ -239,3 +239,30 @@ def run_migrations(
         raise MigrationError("could not read schema migration history") from exc
 
     _validate_history(versions, migrations)
+
+    applied: list[_Migration] = []
+
+    for migration in migrations[len(versions) :]:
+        try:
+            conn.execute("BEGIN IMMEDIATE")
+
+            migration.apply(conn)
+
+            conn.execute(
+                """
+                INSERT INTO schema_migrations(version, name, applied_at)
+                VALUES (?, ?, ?)
+                """,
+                (migration.version, migration.name, now),
+            )
+
+            conn.execute("COMMIT")
+
+            applied.append(migration)
+        except Exception as exc:
+            if conn.in_transaction:
+                conn.execute("ROLLBACK")
+
+            raise MigrationError(f"migration {migration.version} failed") from exc
+
+    return applied
