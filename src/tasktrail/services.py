@@ -9,6 +9,6 @@ def initialize_database(
     path: Path, *, clock: Callable[[], str] = utc_now_iso
 ) -> tuple[int, tuple[str, ...]]:
     with open_database(path, create=True) as conn:
-        print(conn)
+        pass
 
     return 1, ("", "")
