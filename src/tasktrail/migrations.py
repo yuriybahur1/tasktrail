@@ -90,8 +90,7 @@ def _v2(conn: sqlite3.Connection) -> None:
             color TEXT NOT NULL
                 CHECK (
                     color GLOB
-                    '#[0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f]'
-                    '[0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f]'
+                    '#[0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f]'
                 )
         )
         """,
@@ -311,7 +310,7 @@ def run_migrations(
             conn.execute("COMMIT")
             applied_migrations.append(migration)
 
-        except Exception:
+        except Exception as exc:
             if conn.in_transaction:
                 conn.execute("ROLLBACK")
 
