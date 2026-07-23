@@ -4,6 +4,7 @@ import sys
 import traceback
 from collections.abc import Sequence
 
+from tasktrail.commands import init
 from tasktrail.config import resolve_database_path
 from tasktrail.errors import AppError
 
@@ -25,6 +26,13 @@ def _build_parser() -> argparse.ArgumentParser:
         action="store_true",
     )
 
+    subparsers = parser.add_subparsers(
+        dest="command",
+        required=True,
+    )
+
+    init.register(subparsers)
+
     return parser
 
 
@@ -36,6 +44,8 @@ def main(argv: Sequence[str] | None = None):
     debug = args.debug or os.environ.get(_ENV_DEBUG_KEY, "") in {"1", "yes", "true"}
 
     try:
+        args.handler(args)
+
         return 0
     except AppError as exc:
         print(f"error: {exc}", file=sys.stderr)
