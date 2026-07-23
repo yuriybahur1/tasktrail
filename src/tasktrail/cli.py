@@ -1,6 +1,7 @@
 import argparse
 import os
 import sys
+import traceback
 from collections.abc import Sequence
 
 from tasktrail.config import resolve_database_path
@@ -39,3 +40,9 @@ def main(argv: Sequence[str] | None = None):
     except AppError as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 1
+    except Exception as exc:
+        if debug:
+            traceback.print_exc(file=sys.stderr)
+        else:
+            print(f"Internal error: {exc}; rerun with --debug", file=sys.stderr)
+        return 70
