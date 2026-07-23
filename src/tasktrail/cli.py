@@ -1,8 +1,10 @@
 import argparse
 import os
+import sys
 from collections.abc import Sequence
 
 from tasktrail.config import resolve_database_path
+from tasktrail.errors import AppError
 
 _ENV_DEBUG_KEY = "ENV_DEBUG"
 
@@ -31,3 +33,9 @@ def main(argv: Sequence[str] | None = None):
     args.config = resolve_database_path(cli_value=args.db)
 
     debug = args.debug or os.environ.get(_ENV_DEBUG_KEY, "") in {"1", "yes", "true"}
+
+    try:
+        return 0
+    except AppError as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
