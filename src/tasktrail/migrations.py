@@ -169,7 +169,7 @@ _MIGRATIONS = (
     _Migration(3, "activity and report view", _v3),
 )
 
-_LATEST_VERSION = _MIGRATIONS[-1].version
+LATEST_VERSION = _MIGRATIONS[-1].version
 
 
 def _ensure_migration_table(conn: sqlite3.Connection) -> None:
