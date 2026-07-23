@@ -2,5 +2,9 @@ class AppError(Exception):
     pass
 
 
-class DatabaseNotInitializedError(AppError):
+class DatabaseError(AppError):
+    pass
+
+
+class DatabaseNotInitializedError(DatabaseError):
     pass
