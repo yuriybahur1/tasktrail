@@ -8,3 +8,7 @@ class DatabaseError(AppError):
 
 class DatabaseNotInitializedError(DatabaseError):
     pass
+
+
+class MigrationError(AppError):
+    pass
