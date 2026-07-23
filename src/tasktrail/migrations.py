@@ -1,6 +1,8 @@
 import sqlite3
-from collections.abc import Callable
+from collections.abc import Callable, Sequence
 from dataclasses import dataclass
+
+from tasktrail.errors import MigrationError, SchemaCompatibilityError
 
 
 @dataclass(frozen=True, slots=True)
@@ -205,3 +207,35 @@ def _applied_versions(conn: sqlite3.Connection) -> list[int]:
             """
         )
     ]
+
+
+def _validate_history(
+    versions: list[int], migrations: Sequence[_Migration] = _MIGRATIONS
+) -> None:
+    known = [m.version for m in migrations]
+
+    if known != list(range(1, len(known) + 1)):
+        raise MigrationError(
+            "application migrations must have contiguous versions starting at 1"
+        )
+
+    if versions != known[: len(versions)]:
+        raise SchemaCompatibilityError(
+            "schema migration history is unknown or inconsistent"
+        )
+
+
+def run_migrations(
+    conn: sqlite3.Connection,
+    *,
+    now: str,
+    migrations: Sequence[_Migration] = _MIGRATIONS,
+) -> list[_Migration]:
+    try:
+        _ensure_migration_table(conn)
+
+        versions = _applied_versions(conn)
+    except sqlite3.Error as exc:
+        raise MigrationError("could not read schema migration history") from exc
+
+    _validate_history(versions, migrations)

@@ -12,3 +12,7 @@ class DatabaseNotInitializedError(DatabaseError):
 
 class MigrationError(AppError):
     pass
+
+
+class SchemaCompatibilityError(AppError):
+    pass
