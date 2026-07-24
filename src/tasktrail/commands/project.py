@@ -10,6 +10,8 @@ def _handler(args: argparse.Namespace):
             print(
                 f"created project id={add_project(path=args.config.path, name=args.name, description=args.description)}"
             )
+        case "list":
+            pass
         case _:
             pass
 
@@ -25,5 +27,8 @@ def register(subparsers: Subparsers) -> None:
     add_parser = commands.add_parser("add")
     add_parser.add_argument("name")
     add_parser.add_argument("--description")
+
+    list_parser = commands.add_parser("list")
+    list_parser.add_argument("--include-archived", action="store_true")
 
     parser.set_defaults(handler=_handler)
