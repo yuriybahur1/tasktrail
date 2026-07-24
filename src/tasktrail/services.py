@@ -8,6 +8,7 @@ from tasktrail.db import open_database
 from tasktrail.errors import (
     ConflictError,
     DatabaseNotInitializedError,
+    NotFoundError,
     SchemaCompatibilityError,
 )
 from tasktrail.migrations import LATEST_VERSION, current_version, run_migrations
@@ -76,3 +77,29 @@ def list_projects(
         _verify(conn)
 
         return repository.list_projects(conn, include_archived)
+
+
+def archive_project(path: Path, project_id: int) -> None:
+    with open_database(path) as conn:
+        _verify(conn)
+
+        try:
+            conn.execute("BEGIN IMMEDIATE")
+
+            project = repository.get_project(conn, project_id)
+
+            if project is None:
+                raise NotFoundError(f"project {project_id} was not found")
+
+            if project.status == "archived":
+                raise ConflictError("project is already archived")
+
+            # if repository.count_open_project_tasks(conn, project_id) != 0:
+            #     raise ConflictError("cannot archive a project with open tasks")
+            # if repository.archive_project(conn, project_id) != 1:
+            #     raise ConflictError("project state changed while archiving it")
+            conn.execute("COMMIT")
+        except Exception:
+            if conn.in_transaction:
+                conn.execute("ROLLBACK")
+            raise

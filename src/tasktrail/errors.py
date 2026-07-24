@@ -24,3 +24,7 @@ class ValidationError(AppError):
 
 class ConflictError(AppError):
     pass
+
+
+class NotFoundError(AppError):
+    pass
