@@ -61,3 +61,9 @@ def open_database(path: Path, *, create: bool = False) -> Generator[sqlite3.Conn
         yield connection
     finally:
         connection.close()
+
+
+@contextmanager
+def open_read_only(path: Path):
+    if not path.exists():
+        raise DatabaseNotInitializedError("database is not initialized")
