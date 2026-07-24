@@ -20,3 +20,7 @@ class SchemaCompatibilityError(AppError):
 
 class ValidationError(AppError):
     pass
+
+
+class ConflictError(AppError):
+    pass
