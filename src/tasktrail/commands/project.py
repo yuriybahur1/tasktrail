@@ -7,10 +7,8 @@ from tasktrail.services import add_project
 def _handler(args: argparse.Namespace):
     match args.project_command:
         case "add":
-            add_project(
-                path=args.config.path,
-                name=args.name,
-                description=args.description,
+            print(
+                f"created project id={add_project(args.config.path, args.name, args.description)}"
             )
         case _:
             pass
