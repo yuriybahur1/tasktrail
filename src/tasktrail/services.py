@@ -139,6 +139,16 @@ def add_task(
 
                 if project.status != "active":
                     raise ConflictError("cannot add a task to an archived project")
+
+                task_id = repository.create_task(
+                    conn,
+                    project_id,
+                    title,
+                    description,
+                    priority_value,
+                    due,
+                    now,
+                )
             except Exception:
                 if conn.in_transaction:
                     conn.execute("ROLLBACK")
@@ -151,16 +161,6 @@ def add_task(
     # try:
     #     with _checked(path) as conn:
     #         try:
-    #             task_id = repository.create_task(
-    #                 conn,
-    #                 project_id,
-    #                 title,
-    #                 description,
-    #                 priority_value,
-    #                 due,
-    #                 now,
-    #             )
-
     #             repository.insert_activity(
     #                 conn,
     #                 task_id,
