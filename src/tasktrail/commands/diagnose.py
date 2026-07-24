@@ -4,7 +4,7 @@ from tasktrail.commands._types import Subparsers
 
 
 def _handler(args: argparse.Namespace):
-    pass
+    print("Hello")
 
 
 def register(subparsers: Subparsers) -> None:
