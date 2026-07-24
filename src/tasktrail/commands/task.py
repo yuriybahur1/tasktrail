@@ -19,4 +19,15 @@ def register(subparsers: Subparsers) -> None:
         required=True,
     )
 
+    add_parser = commands.add_parser("add")
+    add_parser.add_argument("project_id", type=int)
+    add_parser.add_argument("title")
+    add_parser.add_argument("--description")
+    add_parser.add_argument(
+        "--priority",
+        default="medium",
+        choices=("low", "medium", "high"),
+    )
+    add_parser.add_argument("--due")
+
     parser.set_defaults(handler=_handler)
