@@ -67,3 +67,23 @@ def get_project(
     ).fetchone()
 
     return _project(row) if row else None
+
+
+def count_open_project_tasks(
+    conn: sqlite3.Connection,
+    project_id: int,
+) -> int:
+    row = conn.execute(
+        """
+        SELECT COUNT(*)
+        FROM tasks
+        WHERE project_id = ?
+          AND status IN ('todo', 'in_progress')
+        """,
+        (project_id,),
+    ).fetchone()
+
+    if row is None:
+        raise RuntimeError("SQLite did not return an aggregate row")
+
+    return int(row[0])
