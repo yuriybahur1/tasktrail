@@ -139,3 +139,29 @@ def create_task(
         raise RuntimeError("SQLite did not return a task id")
 
     return int(cursor.lastrowid)
+
+
+def insert_activity(
+    conn: sqlite3.Connection,
+    task_id: int,
+    event: str,
+    details: str | None,
+    now: str,
+) -> None:
+    conn.execute(
+        """
+        INSERT INTO activity_log (
+            task_id,
+            event_type,
+            details,
+            occurred_at
+        )
+        VALUES (?, ?, ?, ?)
+        """,
+        (
+            task_id,
+            event,
+            details,
+            now,
+        ),
+    )

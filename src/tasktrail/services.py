@@ -149,6 +149,18 @@ def add_task(
                     due,
                     now,
                 )
+
+                repository.insert_activity(
+                    conn,
+                    task_id,
+                    "created",
+                    None,
+                    now,
+                )
+
+                conn.execute("COMMIT")
+
+                return task_id
             except Exception:
                 if conn.in_transaction:
                     conn.execute("ROLLBACK")
@@ -157,17 +169,3 @@ def add_task(
         raise ConflictError(
             "a task with that title already exists in the project"
         ) from exc
-
-    # try:
-    #     with _checked(path) as conn:
-    #         try:
-    #             repository.insert_activity(
-    #                 conn,
-    #                 task_id,
-    #                 "created",
-    #                 None,
-    #                 now,
-    #             )
-
-    #             conn.execute("COMMIT")
-    #             return task_id
