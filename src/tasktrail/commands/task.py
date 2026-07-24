@@ -40,4 +40,7 @@ def register(subparsers: Subparsers) -> None:
     )
     add_parser.add_argument("--due")
 
+    show_parser = commands.add_parser("show")
+    show_parser.add_argument("task_id", type=int)
+
     parser.set_defaults(handler=_handler)
