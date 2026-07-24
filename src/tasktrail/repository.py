@@ -87,3 +87,18 @@ def count_open_project_tasks(
         raise RuntimeError("SQLite did not return an aggregate row")
 
     return int(row[0])
+
+
+def archive_project(
+    conn: sqlite3.Connection,
+    project_id: int,
+) -> int:
+    return conn.execute(
+        """
+        UPDATE projects
+        SET status = 'archived'
+        WHERE id = ?
+          AND status = 'active'
+        """,
+        (project_id,),
+    ).rowcount
