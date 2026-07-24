@@ -10,9 +10,10 @@ from tasktrail.errors import (
     DatabaseNotInitializedError,
     NotFoundError,
     SchemaCompatibilityError,
+    ValidationError,
 )
 from tasktrail.migrations import LATEST_VERSION, current_version, run_migrations
-from tasktrail.models import Project
+from tasktrail.models import Priority, Project
 from tasktrail.timeutils import utc_now_iso
 from tasktrail.validation import optional_text, required_text
 
@@ -104,3 +105,75 @@ def archive_project(path: Path, project_id: int) -> None:
             if conn.in_transaction:
                 conn.execute("ROLLBACK")
             raise
+
+
+def priority(value: str) -> str:
+    try:
+        return Priority(value).value
+    except ValueError as exc:
+        raise ValidationError("priority must be low, medium, or high") from exc
+
+
+def add_task(
+    path: Path,
+    project_id: int,
+    title: str,
+    description: str | None,
+    priority_value: str,
+    due: str | None,
+    clock: Callable[[], str] = utc_now_iso,
+) -> int:
+    title = required_text(title, "task title")
+
+    description = optional_text(description, "description")
+
+    priority_value = priority(priority_value)
+    # due = due_date(due)
+    # now = clock()
+
+    # try:
+    #     with _checked(path) as conn:
+    #         _verify(conn)
+
+    #         try:
+    #             conn.execute("BEGIN IMMEDIATE")
+
+    #             project = repository.get_project(conn, project_id)
+    #             if project is None:
+    #                 raise NotFoundError(f"project {project_id} was not found")
+
+    #             if project.status != "active":
+    #                 raise ConflictError(
+    #                     "cannot add a task to an archived project"
+    #                 )
+
+    #             task_id = repository.create_task(
+    #                 conn,
+    #                 project_id,
+    #                 title,
+    #                 description,
+    #                 priority_value,
+    #                 due,
+    #                 now,
+    #             )
+
+    #             repository.insert_activity(
+    #                 conn,
+    #                 task_id,
+    #                 "created",
+    #                 None,
+    #                 now,
+    #             )
+
+    #             conn.execute("COMMIT")
+    #             return task_id
+
+    #         except Exception:
+    #             if conn.in_transaction:
+    #                 conn.execute("ROLLBACK")
+    #             raise
+
+    # except sqlite3.IntegrityError as exc:
+    #     raise ConflictError(
+    #         "a task with that title already exists in the project"
+    #     ) from exc
