@@ -4,7 +4,7 @@ import sys
 import traceback
 from collections.abc import Sequence
 
-from tasktrail.commands import init
+from tasktrail.commands import diagnose, init
 from tasktrail.config import resolve_database_path
 from tasktrail.errors import AppError
 
@@ -32,6 +32,8 @@ def _build_parser() -> argparse.ArgumentParser:
     )
 
     init.register(subparsers)
+
+    diagnose.register(subparsers)
 
     return parser
 
