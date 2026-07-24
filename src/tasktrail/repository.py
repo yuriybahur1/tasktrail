@@ -23,6 +23,16 @@ def create_project(
     return int(cursor.lastrowid)
 
 
+def _project(row: sqlite3.Row) -> Project:
+    return Project(
+        row["id"],
+        row["name"],
+        row["description"],
+        row["status"],
+        row["created_at"],
+    )
+
+
 def list_projects(
     conn: sqlite3.Connection,
     include_archived: bool = False,
