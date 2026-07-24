@@ -16,3 +16,7 @@ class MigrationError(AppError):
 
 class SchemaCompatibilityError(AppError):
     pass
+
+
+class ValidationError(AppError):
+    pass
