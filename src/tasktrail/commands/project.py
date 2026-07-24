@@ -4,7 +4,14 @@ from tasktrail.commands._types import Subparsers
 
 
 def _handler(args: argparse.Namespace):
-    pass
+    match args.project_command:
+        case "add":
+            # _out(
+            #     f"created project id={services.add_project(_path(a), a.name, a.description)}"
+            # )
+            pass
+        case _:
+            pass
 
 
 def register(subparsers: Subparsers) -> None:
