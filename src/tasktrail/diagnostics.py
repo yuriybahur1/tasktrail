@@ -9,6 +9,7 @@ from tasktrail.migrations import LATEST_VERSION, current_version
 
 def diagnose(config: DatabaseConfig) -> list[str]:
     path: Path = config.path
+
     lines = [
         f"database_path={path}",
         f"config_source={config.source.value}",
@@ -19,6 +20,7 @@ def diagnose(config: DatabaseConfig) -> list[str]:
         f"python_version={platform.python_version()}",
         f"configured_busy_timeout_ms={BUSY_TIMEOUT_MS}",
     ]
+
     if not path.is_file():
         lines.extend(
             (
@@ -27,17 +29,24 @@ def diagnose(config: DatabaseConfig) -> list[str]:
                 "diagnostic_connection=not_opened",
             )
         )
+
         return lines
+
     try:
         with open_read_only(path) as conn:
             foreign_keys = conn.execute("PRAGMA foreign_keys").fetchone()[0]
+
             journal = conn.execute("PRAGMA journal_mode").fetchone()[0]
+
             synchronous = conn.execute("PRAGMA synchronous").fetchone()[0]
+
             busy = conn.execute("PRAGMA busy_timeout").fetchone()[0]
+
             try:
                 version: int | None | str = current_version(conn)
             except Exception:
                 version = "unreadable"
+
         lines.extend(
             (
                 f"schema_version={version if version is not None else 'not_initialized'}",
@@ -56,4 +65,5 @@ def diagnose(config: DatabaseConfig) -> list[str]:
                 f"diagnostic_error={type(exc).__name__}",
             )
         )
+
     return lines
