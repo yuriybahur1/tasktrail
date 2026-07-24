@@ -1,12 +1,11 @@
 import argparse
 
 from tasktrail.commands._types import Subparsers
-from tasktrail.db import open_read_only
+from tasktrail.diagnostics import diagnose
 
 
 def _handler(args: argparse.Namespace):
-    with open_read_only(args.config.path) as conn:
-        pass
+    diagnose(args.config)
 
 
 def register(subparsers: Subparsers) -> None:

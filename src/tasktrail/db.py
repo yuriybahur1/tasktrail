@@ -5,7 +5,7 @@ from pathlib import Path
 
 from tasktrail.errors import DatabaseError, DatabaseNotInitializedError
 
-_BUSY_TIMEOUT_MS = 5000
+BUSY_TIMEOUT_MS = 5000
 
 _SYNCHRONOUS = "NORMAL"
 
@@ -25,7 +25,7 @@ def _configure_connection(connection: sqlite3.Connection, *, writable: bool) -> 
 
         connection.execute(f"PRAGMA synchronous = {_SYNCHRONOUS}")
 
-    connection.execute(f"PRAGMA busy_timeout = {_BUSY_TIMEOUT_MS}")
+    connection.execute(f"PRAGMA busy_timeout = {BUSY_TIMEOUT_MS}")
 
 
 @contextmanager
@@ -84,7 +84,7 @@ def open_read_only(path: Path) -> Generator[sqlite3.Connection]:
 
         connection.execute("PRAGMA foreign_keys = ON")
 
-        connection.execute(f"PRAGMA busy_timeout = {_BUSY_TIMEOUT_MS}")
+        connection.execute(f"PRAGMA busy_timeout = {BUSY_TIMEOUT_MS}")
     except sqlite3.Error as exc:
         if connection is not None:
             connection.close()
