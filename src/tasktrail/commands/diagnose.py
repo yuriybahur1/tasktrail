@@ -5,7 +5,8 @@ from tasktrail.diagnostics import diagnose
 
 
 def _handler(args: argparse.Namespace):
-    diagnose(args.config)
+    for line in diagnose(args.config):
+        print(line)
 
 
 def register(subparsers: Subparsers) -> None:
