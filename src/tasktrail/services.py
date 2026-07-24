@@ -94,8 +94,9 @@ def archive_project(path: Path, project_id: int) -> None:
             if project.status == "archived":
                 raise ConflictError("project is already archived")
 
-            # if repository.count_open_project_tasks(conn, project_id) != 0:
-            #     raise ConflictError("cannot archive a project with open tasks")
+            if repository.count_open_project_tasks(conn, project_id) != 0:
+                raise ConflictError("cannot archive a project with open tasks")
+
             # if repository.archive_project(conn, project_id) != 1:
             #     raise ConflictError("project state changed while archiving it")
             conn.execute("COMMIT")
