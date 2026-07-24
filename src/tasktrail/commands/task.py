@@ -5,7 +5,7 @@ from tasktrail.commands._types import Subparsers
 
 def _handler(args: argparse.Namespace):
     match args.task_command:
-        case "test":
+        case "add":
             pass
         case _:
             pass
