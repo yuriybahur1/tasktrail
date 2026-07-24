@@ -10,10 +10,9 @@ from tasktrail.errors import (
     DatabaseNotInitializedError,
     NotFoundError,
     SchemaCompatibilityError,
-    ValidationError,
 )
 from tasktrail.migrations import LATEST_VERSION, current_version, run_migrations
-from tasktrail.models import Priority, Project
+from tasktrail.models import Project
 from tasktrail.timeutils import utc_now_iso
 from tasktrail.validation import optional_text, required_text
 
@@ -105,13 +104,6 @@ def archive_project(path: Path, project_id: int) -> None:
             if conn.in_transaction:
                 conn.execute("ROLLBACK")
             raise
-
-
-def priority(value: str) -> str:
-    try:
-        return Priority(value).value
-    except ValueError as exc:
-        raise ValidationError("priority must be low, medium, or high") from exc
 
 
 def add_task(

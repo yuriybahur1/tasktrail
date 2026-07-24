@@ -1,4 +1,5 @@
 from tasktrail.errors import ValidationError
+from tasktrail.models import Priority
 
 
 def required_text(value: str, field: str, maximum: int = 120) -> str:
@@ -26,3 +27,10 @@ def optional_text(value: str | None, field: str, maximum: int = 1000) -> str | N
         raise ValidationError(f"{field} must be at most {maximum} characters")
 
     return cleaned
+
+
+def priority(value: str) -> str:
+    try:
+        return Priority(value).value
+    except ValueError as exc:
+        raise ValidationError("priority must be low, medium, or high") from exc
