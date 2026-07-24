@@ -1,6 +1,6 @@
 import argparse
 
-from tasktrail import services
+from tasktrail import formatting, services
 from tasktrail.commands._types import Subparsers
 
 
@@ -12,7 +12,7 @@ def _handler(args: argparse.Namespace):
             )
         case "list":
             for x in services.list_projects(args.config.path, args.include_archived):
-                pass
+                print(formatting.project_line(x))
         case _:
             pass
 
