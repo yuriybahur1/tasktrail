@@ -8,7 +8,7 @@ def _handler(args: argparse.Namespace):
     match args.project_command:
         case "add":
             print(
-                f"created project id={add_project(args.config.path, args.name, args.description)}"
+                f"created project id={add_project(path=args.config.path, name=args.name, description=args.description)}"
             )
         case _:
             pass
