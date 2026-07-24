@@ -1,17 +1,18 @@
 import argparse
 
+from tasktrail import services
 from tasktrail.commands._types import Subparsers
-from tasktrail.services import add_project
 
 
 def _handler(args: argparse.Namespace):
     match args.project_command:
         case "add":
             print(
-                f"created project id={add_project(path=args.config.path, name=args.name, description=args.description)}"
+                f"created project id={services.add_project(path=args.config.path, name=args.name, description=args.description)}"
             )
         case "list":
-            pass
+            for x in services.list_projects(args.config.path, args.include_archived):
+                pass
         case _:
             pass
 

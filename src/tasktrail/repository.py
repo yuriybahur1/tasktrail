@@ -42,7 +42,7 @@ def list_projects(
         FROM projects
     """
 
-    params: tuple[object, ...]
+    params: tuple[object, ...] = tuple()
 
     if not include_archived:
         sql += " WHERE status = ?"
