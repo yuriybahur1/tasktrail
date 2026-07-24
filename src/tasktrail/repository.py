@@ -102,3 +102,40 @@ def archive_project(
         """,
         (project_id,),
     ).rowcount
+
+
+def create_task(
+    conn: sqlite3.Connection,
+    project_id: int,
+    title: str,
+    description: str | None,
+    priority: str,
+    due: str | None,
+    now: str,
+) -> int:
+    cursor = conn.execute(
+        """
+        INSERT INTO tasks (
+            project_id,
+            title,
+            description,
+            priority,
+            due_date,
+            created_at
+        )
+        VALUES (?, ?, ?, ?, ?, ?)
+        """,
+        (
+            project_id,
+            title,
+            description,
+            priority,
+            due,
+            now,
+        ),
+    )
+
+    if cursor.lastrowid is None:
+        raise RuntimeError("SQLite did not return a task id")
+
+    return int(cursor.lastrowid)
