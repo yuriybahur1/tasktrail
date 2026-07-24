@@ -51,3 +51,19 @@ def list_projects(
     sql += " ORDER BY name COLLATE NOCASE, id"
 
     return [_project(row) for row in conn.execute(sql, params)]
+
+
+def get_project(
+    conn: sqlite3.Connection,
+    project_id: int,
+) -> Project | None:
+    row = conn.execute(
+        """
+        SELECT id, name, description, status, created_at
+        FROM projects
+        WHERE id = ?
+        """,
+        (project_id,),
+    ).fetchone()
+
+    return _project(row) if row else None
