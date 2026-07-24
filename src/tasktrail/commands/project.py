@@ -15,6 +15,8 @@ def _handler(args: argparse.Namespace):
                 print(formatting.project_line(x))
         case "archive":
             pass
+            # services.archive_project(_path(a), a.project_id)
+            # _out(f"archived project id={a.project_id}")
         case _:
             pass
 
