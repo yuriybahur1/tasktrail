@@ -169,3 +169,15 @@ def add_task(
         raise ConflictError(
             "a task with that title already exists in the project"
         ) from exc
+
+
+# def task(path: Path, task_id: int) -> Task:
+#     with _checked(path) as conn:
+#         _verify(conn)
+
+#         result = repository.get_task(conn, task_id)
+
+#         if result is None:
+#             raise NotFoundError(f"task {task_id} was not found")
+
+#         return result
