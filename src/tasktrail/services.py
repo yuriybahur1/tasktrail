@@ -23,3 +23,21 @@ def initialize(
     return cast(int, version), [
         f"{migration.version}: {migration.name}" for migration in applied
     ]
+
+
+def add_project(
+    *,
+    path: Path,
+    name: str,
+    description: str | None,
+    clock: Callable[[], str] = utc_now_iso,
+) -> int:
+    pass
+    # name = required_text(name, "project name")
+    # description = optional_text(description, "description")
+    # try:
+    #     with _checked(path) as conn:
+    #         _verify(conn)
+    #         return repository.create_project(conn, name, description, clock())
+    # except sqlite3.IntegrityError as exc:
+    #     raise ConflictError("a project with that name already exists") from exc

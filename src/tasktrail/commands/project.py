@@ -1,15 +1,17 @@
 import argparse
 
 from tasktrail.commands._types import Subparsers
+from tasktrail.services import add_project
 
 
 def _handler(args: argparse.Namespace):
     match args.project_command:
         case "add":
-            # _out(
-            #     f"created project id={services.add_project(_path(a), a.name, a.description)}"
-            # )
-            pass
+            add_project(
+                path=args.config.path,
+                name=args.name,
+                description=args.description,
+            )
         case _:
             pass
 
