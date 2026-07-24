@@ -6,6 +6,7 @@ from tasktrail.db import open_database
 from tasktrail.errors import SchemaCompatibilityError
 from tasktrail.migrations import LATEST_VERSION, current_version, run_migrations
 from tasktrail.timeutils import utc_now_iso
+from tasktrail.validation import optional_text, required_text
 
 
 def initialize(
@@ -32,8 +33,10 @@ def add_project(
     description: str | None,
     clock: Callable[[], str] = utc_now_iso,
 ) -> int:
-    pass
-    # name = required_text(name, "project name")
+    name = required_text(name, "project name")
+
+    description = optional_text(description, "description")
+
     # description = optional_text(description, "description")
     # try:
     #     with _checked(path) as conn:
