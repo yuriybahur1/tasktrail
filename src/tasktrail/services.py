@@ -10,6 +10,7 @@ from tasktrail.errors import (
     SchemaCompatibilityError,
 )
 from tasktrail.migrations import LATEST_VERSION, current_version, run_migrations
+from tasktrail.repository import create_project
 from tasktrail.timeutils import utc_now_iso
 from tasktrail.validation import optional_text, required_text
 
@@ -59,6 +60,8 @@ def add_project(
 
     try:
         with open_database(path) as conn:
-            pass
+            _verify(conn)
+
+            return create_project(conn, name, description, clock())
     except sqlite3.IntegrityError as exc:
         raise ConflictError("a project with that name already exists") from exc
