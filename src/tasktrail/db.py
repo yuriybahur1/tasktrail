@@ -61,3 +61,36 @@ def open_database(path: Path, *, create: bool = False) -> Generator[sqlite3.Conn
         yield connection
     finally:
         connection.close()
+
+
+@contextmanager
+def open_read_only(path: Path) -> Generator[sqlite3.Connection]:
+    if not path.exists():
+        raise DatabaseNotInitializedError("database is not initialized")
+
+    connection: sqlite3.Connection | None = None
+
+    try:
+        uri = f"{path.resolve().as_uri()}?mode=ro"
+
+        connection = sqlite3.connect(
+            uri,
+            uri=True,
+            timeout=_CONNECT_TIMEOUT_SECONDS,
+            isolation_level=None,
+        )
+
+        connection.row_factory = sqlite3.Row
+
+        connection.execute("PRAGMA foreign_keys = ON")
+
+        connection.execute(f"PRAGMA busy_timeout = {_BUSY_TIMEOUT_MS}")
+    except sqlite3.Error as exc:
+        if connection is not None:
+            connection.close()
+        raise DatabaseError("database diagnostic failed") from exc
+
+    try:
+        yield connection
+    finally:
+        connection.close()
