@@ -1,3 +1,5 @@
+from datetime import date
+
 from tasktrail.errors import ValidationError
 from tasktrail.models import Priority
 
@@ -34,3 +36,13 @@ def priority(value: str) -> str:
         return Priority(value).value
     except ValueError as exc:
         raise ValidationError("priority must be low, medium, or high") from exc
+
+
+def due_date(value: str | None) -> str | None:
+    if value is None:
+        return None
+
+    try:
+        return date.fromisoformat(value).isoformat()
+    except ValueError as exc:
+        raise ValidationError("due date must use YYYY-MM-DD") from exc
